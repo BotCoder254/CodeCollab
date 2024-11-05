@@ -1,193 +1,219 @@
-const express = require('express');
-const router = express.Router();
-const auth = require('../middleware/auth');
-const File = require('../models/File');
-const Project = require('../models/Project');
-
-// Get all files for a project
-router.get('/project/:projectId', auth, async (req, res) => {
-    try {
-        const files = await File.find({ project: req.params.projectId });
-        res.json(files);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Create new file or folder
-router.post('/', auth, async (req, res) => {
-    try {
-        const { name, type, parentId, projectId, content, language } = req.body;
-
-        // Check if project exists and user has access
-        const project = await Project.findById(projectId);
-        if (!project) {
-            return res.status(404).json({ error: 'Project not found' });
-        }
-
-        const hasAccess = project.collaborators.some(
-            collab => collab.user.toString() === req.user.id && ['admin', 'write'].includes(collab.role)
-        );
-
-        if (!hasAccess) {
-            return res.status(403).json({ error: 'Access denied' });
-        }
-
-        // Check for duplicate names in the same directory
-        const existingFile = await File.findOne({
-            project: projectId,
-            parent: parentId || null,
-            name: name
-        });
-
-        if (existingFile) {
-            return res.status(400).json({ error: 'A file or folder with this name already exists' });
-        }
-
-        const file = new File({
-            name,
-            type: type || 'file',
-            parent: parentId || null,
-            project: projectId,
-            content: content || '',
-            language: language || 'plaintext'
-        });
-
-        await file.save();
-        res.json(file);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Get file content
-router.get('/:id', auth, async (req, res) => {
-    try {
-        const file = await File.findById(req.params.id);
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        const project = await Project.findById(file.project);
-        const hasAccess = project.collaborators.some(
-            collab => collab.user.toString() === req.user.id
-        );
-
-        if (!hasAccess) {
-            return res.status(403).json({ error: 'Access denied' });
-        }
-
-        res.json(file);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Update file content or rename
-router.put('/:id', auth, async (req, res) => {
-    try {
-        const { content, name } = req.body;
-        const file = await File.findById(req.params.id);
-
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        const project = await Project.findById(file.project);
-        const hasAccess = project.collaborators.some(
-            collab => collab.user.toString() === req.user.id && ['admin', 'write'].includes(collab.role)
-        );
-
-        if (!hasAccess) {
-            return res.status(403).json({ error: 'Access denied' });
-        }
-
-        if (name) {
-            const existingFile = await File.findOne({
-                project: file.project,
-                parent: file.parent,
-                name: name,
-                _id: { $ne: file._id }
-            });
-
-            if (existingFile) {
-                return res.status(400).json({ error: 'A file with this name already exists' });
-            }
-
-            file.name = name;
-        }
-
-        if (content !== undefined) {
-            file.content = content;
-        }
-
-        await file.save();
-        res.json(file);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Move file
-router.put('/move', auth, async (req, res) => {
-    try {
-        const { sourcePath, targetPath, projectId } = req.body;
-        const file = await File.findOne({ path: sourcePath, project: projectId });
-
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        const project = await Project.findById(projectId);
-        const hasAccess = project.collaborators.some(
-            collab => collab.user.toString() === req.user.id && ['admin', 'write'].includes(collab.role)
-        );
-
-        if (!hasAccess) {
-            return res.status(403).json({ error: 'Access denied' });
-        }
-
-        file.path = targetPath;
-        await file.save();
-        res.json(file);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Delete file or folder
-router.delete('/:id', auth, async (req, res) => {
-    try {
-        const file = await File.findById(req.params.id);
-        if (!file) {
-            return res.status(404).json({ error: 'File not found' });
-        }
-
-        const project = await Project.findById(file.project);
-        const hasAccess = project.collaborators.some(
-            collab => collab.user.toString() === req.user.id && ['admin', 'write'].includes(collab.role)
-        );
-
-        if (!hasAccess) {
-            return res.status(403).json({ error: 'Access denied' });
-        }
-
-        if (file.type === 'folder') {
-            // Delete all files in the folder
-            await File.deleteMany({ path: new RegExp(`^${file.path}/`) });
-        }
-
-        await file.remove();
-        res.json({ message: 'File deleted' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-module.exports = router;
+const express = require('express');
+const router = express.Router();
+const File = require('../models/File');
+const Project = require('../models/Project');
+const auth = require('../middleware/auth');
+
+// Middleware to check project access
+async function checkProjectAccess(req, res, next) {
+    try {
+        const file = await File.findById(req.params.id);
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const project = await Project.findById(file.project);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Check if user is owner or collaborator
+        const isCollaborator = project.collaborators.some(
+            collab => collab.user.toString() === req.user.id
+        );
+        const isOwner = project.owner.toString() === req.user.id;
+
+        if (!isCollaborator && !isOwner) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Add project and file to request object
+        req.project = project;
+        req.projectFile = file;
+        next();
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+// Get all files for a project with access control
+router.get('/project/:projectId', auth, async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        // Check access
+        const hasAccess = project.collaborators.some(
+            collab => collab.user.toString() === req.user.id
+        ) || project.owner.toString() === req.user.id;
+
+        if (!hasAccess) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        const files = await File.find({ project: req.params.projectId })
+            .select('name updatedAt')
+            .sort({ updatedAt: -1 });
+
+        res.json(files);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get single file with access control
+router.get('/:id', auth, checkProjectAccess, async (req, res) => {
+    res.json(req.projectFile);
+});
+
+// Create new file with project access check
+router.post('/', auth, async (req, res) => {
+    try {
+        const { name, content, projectId } = req.body;
+
+        // Check project access
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        const hasAccess = project.collaborators.some(
+            collab => collab.user.toString() === req.user.id && collab.role !== 'viewer'
+        ) || project.owner.toString() === req.user.id;
+
+        if (!hasAccess) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        // Check for duplicate file names
+        const existingFile = await File.findOne({ 
+            project: projectId, 
+            name: name 
+        });
+
+        if (existingFile) {
+            return res.status(400).json({ 
+                message: 'A file with this name already exists in the project' 
+            });
+        }
+
+        const file = new File({
+            name,
+            content,
+            project: projectId
+        });
+
+        await file.save();
+
+        // Add file reference to project
+        project.files.push(file._id);
+        await project.save();
+
+        res.json(file);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Update file with access control
+router.put('/:id', auth, checkProjectAccess, async (req, res) => {
+    try {
+        const { content } = req.body;
+
+        // Check if user has edit permissions
+        const hasEditAccess = req.project.collaborators.some(
+            collab => collab.user.toString() === req.user.id && collab.role !== 'viewer'
+        ) || req.project.owner.toString() === req.user.id;
+
+        if (!hasEditAccess) {
+            return res.status(403).json({ message: 'You do not have edit permissions' });
+        }
+
+        const file = await File.findByIdAndUpdate(
+            req.params.id,
+            { 
+                content,
+                updatedAt: Date.now()
+            },
+            { new: true }
+        );
+
+        res.json(file);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Delete file with access control
+router.delete('/:id', auth, checkProjectAccess, async (req, res) => {
+    try {
+        // Check if user has admin/owner permissions
+        const hasAdminAccess = req.project.collaborators.some(
+            collab => collab.user.toString() === req.user.id && collab.role === 'admin'
+        ) || req.project.owner.toString() === req.user.id;
+
+        if (!hasAdminAccess) {
+            return res.status(403).json({ message: 'You do not have permission to delete files' });
+        }
+
+        // Remove file reference from project
+        req.project.files = req.project.files.filter(
+            fileId => fileId.toString() !== req.params.id
+        );
+        await req.project.save();
+
+        // Delete the file
+        await File.findByIdAndDelete(req.params.id);
+
+        res.json({ message: 'File deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// New route to handle file rename
+router.patch('/:id/rename', auth, checkProjectAccess, async (req, res) => {
+    try {
+        const { newName } = req.body;
+
+        // Check for edit permissions
+        const hasEditAccess = req.project.collaborators.some(
+            collab => collab.user.toString() === req.user.id && collab.role !== 'viewer'
+        ) || req.project.owner.toString() === req.user.id;
+
+        if (!hasEditAccess) {
+            return res.status(403).json({ message: 'You do not have edit permissions' });
+        }
+
+        // Check for duplicate names
+        const existingFile = await File.findOne({
+            project: req.project._id,
+            name: newName,
+            _id: { $ne: req.params.id }
+        });
+
+        if (existingFile) {
+            return res.status(400).json({ 
+                message: 'A file with this name already exists in the project' 
+            });
+        }
+
+        const file = await File.findByIdAndUpdate(
+            req.params.id,
+            { 
+                name: newName,
+                updatedAt: Date.now()
+            },
+            { new: true }
+        );
+
+        res.json(file);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+module.exports = router;
+

@@ -1,0 +1,34 @@
+<div class="h-full flex">
+    <!-- File Tree -->
+    <div class="w-64 bg-gray-900 text-white overflow-y-auto" id="fileTree">
+        <div class="p-4 border-b border-gray-700">
+            <button id="newFileBtn" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+                New File
+            </button>
+        </div>
+        <div class="p-4">
+            <div id="fileList" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Editor Area -->
+    <div class="flex-1 flex flex-col">
+        <!-- Tab Bar -->
+        <div class="bg-gray-800 text-white flex" id="tabBar"></div>
+
+        <!-- Monaco Editor Container -->
+        <div class="flex-1" id="monacoEditor"></div>
+    </div>
+</div>
+
+<!-- New File Modal -->
+<div id="newFileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg p-6 w-96">
+        <h3 class="text-lg font-semibold mb-4">Create New File</h3>
+        <input type="text" id="newFileName" class="w-full border rounded px-3 py-2 mb-4" placeholder="File name">
+        <div class="flex justify-end space-x-3">
+            <button id="cancelNewFile" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+            <button id="createNewFile" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Create</button>
+        </div>
+    </div>
+</div> 
