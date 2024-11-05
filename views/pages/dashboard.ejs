@@ -1,0 +1,187 @@
+<!-- Main Content -->
+<div class="py-6">
+    <!-- Top Bar -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">My Projects</h1>
+                <p class="mt-1 text-sm text-gray-500">Manage your coding projects and collaborations</p>
+            </div>
+            <button id="newProjectBtn" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                <i class="fas fa-plus mr-2"></i>
+                New Project
+            </button>
+        </div>
+    </div>
+
+    <!-- Project Statistics -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Total Projects -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-folder text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Projects</dt>
+                                <dd class="text-lg font-semibold text-gray-900"><%= projects.length %></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Collaborations -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-users text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Active Collaborations</dt>
+                                <dd class="text-lg font-semibold text-gray-900">
+                                    <%= projects.filter(p => p.collaborators.length > 1).length %>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-clock text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Recent Updates</dt>
+                                <dd class="text-lg font-semibold text-gray-900">
+                                    <%= projects.filter(p => new Date(p.updatedAt) > new Date(Date.now() - 7*24*60*60*1000)).length %>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storage Used -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-database text-purple-600 text-2xl"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Storage Used</dt>
+                                <dd class="text-lg font-semibold text-gray-900">0 MB</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <% projects.forEach(project => { %>
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    <%= project.name %>
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500">
+                                    <%= project.description %>
+                                </p>
+                            </div>
+                            <div class="relative">
+                                <button class="project-menu-btn p-2 hover:bg-gray-100 rounded-full">
+                                    <i class="fas fa-ellipsis-v text-gray-500"></i>
+                                </button>
+                                <div class="project-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                                    <a href="/projects/<%= project._id %>" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-code mr-2"></i> Open Editor
+                                    </a>
+                                    <a href="/projects/<%= project._id %>/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-cog mr-2"></i> Settings
+                                    </a>
+                                    <button class="share-project w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-project-id="<%= project._id %>">
+                                        <i class="fas fa-share mr-2"></i> Share
+                                    </button>
+                                    <button class="delete-project w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100" data-project-id="<%= project._id %>">
+                                        <i class="fas fa-trash mr-2"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <div class="flex items-center">
+                                    <i class="fas fa-users mr-1"></i>
+                                    <%= project.collaborators.length %> collaborators
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    Updated <%= new Date(project.updatedAt).toLocaleDateString() %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</div>
+
+<!-- Share Project Modal -->
+<div id="shareProjectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Share Project</h3>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Invite Collaborators
+                    </label>
+                    <div class="flex space-x-2">
+                        <input type="email" id="collaboratorEmail" placeholder="Enter email address"
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button id="inviteCollaborator" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Invite
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Current Collaborators
+                    </label>
+                    <div id="collaboratorsList" class="space-y-2">
+                        <!-- Collaborators will be listed here -->
+                    </div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg flex justify-end">
+                <button id="closeShareModal" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this at the bottom of dashboard.ejs -->
+<script src="/js/project-manager.js"></script>

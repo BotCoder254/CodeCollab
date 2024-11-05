@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-gray-100">
+    <%- include('components/sidebar', { path: '/projects' }) %>
+    
+    <div class="ml-64">
+        <div class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">Project Settings</h1>
+                        <p class="mt-1 text-sm text-gray-500">Manage your project settings and collaborators</p>
+                    </div>
+                    <a href="/projects/<%= project._id %>" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        <i class="fas fa-code mr-2"></i>
+                        Open Editor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <form id="projectSettingsForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Project Name</label>
+                            <input type="text" name="name" value="<%= project.name %>"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea name="description" rows="3"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"><%= project.description %></textarea>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">Collaborators</h3>
+                            <div class="mt-4 space-y-4">
+                                <% project.collaborators.forEach(collab => { %>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <span class="font-medium"><%= collab.user.username %></span>
+                                            <span class="text-sm text-gray-500">(<%= collab.user.email %>)</span>
+                                        </div>
+                                        <div class="flex items-center space-x-4">
+                                            <select class="role-select text-sm border-gray-300 rounded-md"
+                                                    data-user-id="<%= collab.user._id %>"
+                                                    <%= project.owner._id.toString() === collab.user._id.toString() ? 'disabled' : '' %>>
+                                                <option value="read" <%= collab.role === 'read' ? 'selected' : '' %>>Read</option>
+                                                <option value="write" <%= collab.role === 'write' ? 'selected' : '' %>>Write</option>
+                                                <option value="admin" <%= collab.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                            </select>
+                                            <% if (project.owner._id.toString() !== collab.user._id.toString()) { %>
+                                                <button type="button" class="remove-collaborator text-red-600 hover:text-red-700"
+                                                        data-user-id="<%= collab.user._id %>">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('projectSettingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    
+    try {
+        const response = await fetch(`/projects/<%= project._id %>`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: formData.get('name'),
+                description: formData.get('description')
+            })
+        });
+
+        if (response.ok) {
+            showNotification('Project settings updated successfully');
+        } else {
+            throw new Error('Failed to update project');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Failed to update project settings', 'error');
+    }
+});
+
+// Role change handler
+document.querySelectorAll('.role-select').forEach(select => {
+    select.addEventListener('change', async (e) => {
+        const userId = e.target.dataset.userId;
+        const newRole = e.target.value;
+        
+        try {
+            const response = await fetch(`/projects/<%= project._id %>/collaborators/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role: newRole })
+            });
+
+            if (response.ok) {
+                showNotification('Collaborator role updated');
+            } else {
+                throw new Error('Failed to update role');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Failed to update collaborator role', 'error');
+            e.target.value = e.target.dataset.originalValue;
+        }
+    });
+});
+
+// Remove collaborator handler
+document.querySelectorAll('.remove-collaborator').forEach(button => {
+    button.addEventListener('click', async () => {
+        if (confirm('Are you sure you want to remove this collaborator?')) {
+            const userId = button.dataset.userId;
+            
+            try {
+                const response = await fetch(`/projects/<%= project._id %>/collaborators/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    button.closest('.flex.items-center.justify-between').remove();
+                    showNotification('Collaborator removed successfully');
+                } else {
+                    throw new Error('Failed to remove collaborator');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Failed to remove collaborator', 'error');
+            }
+        }
+    });
+});
+</script> 

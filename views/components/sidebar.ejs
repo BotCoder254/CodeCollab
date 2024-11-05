@@ -1,0 +1,68 @@
+<div class="w-64 bg-gray-900 min-h-screen flex flex-col fixed">
+    <!-- Logo Section -->
+    <div class="p-4 bg-gray-800/50 backdrop-blur-sm border-b border-gray-700/50">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-indigo-600 rounded-lg">
+                <i class="fas fa-code text-white text-xl"></i>
+            </div>
+            <div class="text-xl font-bold text-white">
+                <span class="text-indigo-400">Code</span>Collab
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="p-4 border-b border-gray-700/50">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center shadow-lg">
+                <span class="text-white font-semibold">
+                    <%= user && user.username ? user.username.charAt(0).toUpperCase() : 'G' %>
+                </span>
+            </div>
+            <div>
+                <div class="text-white font-medium">
+                    <%= user && user.username ? user.username : 'Guest' %>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    <%= user && user.email ? user.email : '' %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 p-4">
+        <div class="space-y-1">
+            <a href="/dashboard" 
+               class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-800/50 p-3 rounded-lg transition-all duration-200 <%= path === '/dashboard' ? 'bg-gray-800/50 text-white' : '' %>">
+                <i class="fas fa-home w-5"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/projects" 
+               class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-800/50 p-3 rounded-lg transition-all duration-200 <%= path === '/projects' ? 'bg-gray-800/50 text-white' : '' %>">
+                <i class="fas fa-folder w-5"></i>
+                <span>Projects</span>
+            </a>
+            <a href="/collaborations" 
+               class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-800/50 p-3 rounded-lg transition-all duration-200 <%= path === '/collaborations' ? 'bg-gray-800/50 text-white' : '' %>">
+                <i class="fas fa-users w-5"></i>
+                <span>Collaborations</span>
+            </a>
+            <a href="/templates" 
+               class="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-gray-800/50 p-3 rounded-lg transition-all duration-200 <%= path === '/templates' ? 'bg-gray-800/50 text-white' : '' %>">
+                <i class="fas fa-box-archive w-5"></i>
+                <span>Templates</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Logout -->
+    <div class="p-4 border-t border-gray-700/50">
+        <form action="/auth/logout" method="POST">
+            <button type="submit" class="w-full flex items-center justify-center space-x-2 text-gray-300 hover:text-white hover:bg-red-600/20 p-2 rounded-lg transition-all duration-200">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+    </div>
+</div> 

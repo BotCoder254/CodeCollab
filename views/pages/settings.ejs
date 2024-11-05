@@ -1,0 +1,130 @@
+<div class="py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+        
+        <!-- Settings Tabs -->
+        <div class="mt-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 border-indigo-500 font-medium text-sm text-indigo-600" data-tab="profile">
+                        Profile
+                    </button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="account">
+                        Account
+                    </button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="notifications">
+                        Notifications
+                    </button>
+                    <button class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="appearance">
+                        Appearance
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Profile Settings -->
+            <div id="profile" class="tab-content mt-6">
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <form id="profileForm">
+                            <div class="space-y-6">
+                                <!-- Profile Picture -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                                    <div class="mt-2 flex items-center space-x-4">
+                                        <div class="w-12 h-12 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl">
+                                            <%= user.username.charAt(0).toUpperCase() %>
+                                        </div>
+                                        <button type="button" class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
+                                            Change
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Username -->
+                                <div>
+                                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                                    <input type="text" id="username" name="username" value="<%= user.username %>"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                    <input type="email" id="email" name="email" value="<%= user.email %>"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
+                                <!-- Bio -->
+                                <div>
+                                    <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+                                    <textarea id="bio" name="bio" rows="3"
+                                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                </div>
+
+                                <div class="flex justify-end">
+                                    <button type="submit"
+                                        class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other tab contents... -->
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update button states
+            tabBtns.forEach(b => {
+                b.classList.remove('border-indigo-500', 'text-indigo-600');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+            btn.classList.remove('border-transparent', 'text-gray-500');
+            btn.classList.add('border-indigo-500', 'text-indigo-600');
+
+            // Show selected tab content
+            const tabId = btn.dataset.tab;
+            tabContents.forEach(content => {
+                content.style.display = content.id === tabId ? 'block' : 'none';
+            });
+        });
+    });
+
+    // Form submission
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        try {
+            const response = await fetch('/settings/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            });
+
+            if (response.ok) {
+                showNotification('Profile updated successfully', 'success');
+            } else {
+                throw new Error('Failed to update profile');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Failed to update profile', 'error');
+        }
+    });
+});
+</script> 

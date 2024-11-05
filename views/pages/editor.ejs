@@ -1,0 +1,196 @@
+<div class="min-h-screen flex flex-col bg-gray-900">
+    <!-- Top Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-full mx-auto px-4">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-4">
+                    <a href="/projects" class="text-gray-300 hover:text-white">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Projects
+                    </a>
+                    <h1 class="text-xl font-bold text-white"><%= project.name %></h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <select id="languageSelect" class="bg-gray-700 text-white px-3 py-1 rounded-md border border-gray-600">
+                        <option value="javascript">JavaScript</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                    </select>
+
+                    <!-- Theme Selector -->
+                    <select id="themeSelect" class="bg-gray-700 text-white px-3 py-1 rounded-md border border-gray-600">
+                        <option value="vs-dark">Dark</option>
+                        <option value="vs-light">Light</option>
+                        <option value="hc-black">High Contrast</option>
+                    </select>
+
+                    <button id="formatBtn" class="px-3 py-1 bg-gray-700 text-white rounded-md hover:bg-gray-600">
+                        <i class="fas fa-magic mr-2"></i>Format
+                    </button>
+
+                    <button id="saveAsTemplate" class="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        <i class="fas fa-save mr-2"></i>Save as Template
+                    </button>
+
+                    <button id="shareBtn" class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <i class="fas fa-share mr-2"></i>Share
+                    </button>
+
+                    <!-- Active Users -->
+                    <div class="flex -space-x-2" id="activeUsers">
+                        <!-- Active users will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Editor Container -->
+    <div class="flex flex-1">
+        <!-- File Explorer -->
+        <div class="w-64 bg-gray-800 text-white flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Files</h2>
+                    <div class="space-x-2">
+                        <button id="newFileBtn" class="p-1 hover:text-indigo-400" title="New File">
+                            <i class="fas fa-file-plus"></i>
+                        </button>
+                        <button id="newFolderBtn" class="p-1 hover:text-indigo-400" title="New Folder">
+                            <i class="fas fa-folder-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="fileTree" class="flex-1 overflow-y-auto p-4">
+                <!-- Files will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Editor and Terminal Split -->
+        <div class="flex-1 flex flex-col">
+            <!-- Monaco Editor -->
+            <div id="monacoEditor" class="flex-1"></div>
+
+            <!-- Terminal -->
+            <div id="terminal" class="h-48 bg-black text-white p-2 font-mono text-sm overflow-auto hidden">
+                <!-- Terminal output will be here -->
+            </div>
+
+            <!-- Status Bar -->
+            <div class="bg-gray-800 text-gray-300 px-4 py-1 flex justify-between items-center text-sm">
+                <div class="flex items-center space-x-4">
+                    <span id="cursorPosition">Ln 1, Col 1</span>
+                    <span id="fileInfo">UTF-8</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="toggleTerminal" class="hover:text-white">
+                        <i class="fas fa-terminal"></i>
+                    </button>
+                    <span id="lastSaved">Saved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Save as Template Modal -->
+<div id="templateModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-medium text-gray-900">Save as Template</h3>
+            </div>
+            <form id="templateForm" class="px-6 py-4">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Template Name</label>
+                        <input type="text" name="name" required
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea name="description" rows="3"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Category</label>
+                        <select name="category"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                            <option value="frontend">Frontend</option>
+                            <option value="backend">Backend</option>
+                            <option value="fullstack">Full Stack</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeTemplateModal()"
+                        class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 text-sm text-white bg-indigo-600 hover:bg-indigo-700 rounded-md">
+                        Save Template
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Share Project Modal -->
+<div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-medium text-gray-900">Share Project</h3>
+            </div>
+            <div class="px-6 py-4">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">Invite Collaborators</label>
+                    <div class="flex space-x-2">
+                        <input type="email" id="collaboratorEmail" placeholder="Enter email address"
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-md">
+                        <button id="inviteCollaborator" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Invite
+                        </button>
+                    </div>
+                </div>
+                <div id="collaboratorsList" class="space-y-2">
+                    <!-- Collaborators will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Required Scripts -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/enhanced-editor.js"></script>
+<script src="/js/file-manager.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize editor
+    const editor = new EnhancedEditor('monacoEditor', {
+        projectId: '<%= project._id %>',
+        userId: '<%= user.id %>',
+        username: '<%= user.username %>'
+    });
+
+    // Initialize file manager
+    const fileManager = new FileManager('fileTree', {
+        projectId: '<%= project._id %>'
+    });
+
+    // Connect file manager with editor
+    fileManager.onFileSelect = (file) => {
+        editor.setContent(file.content);
+        editor.setLanguage(file.language);
+    };
+});
+</script>

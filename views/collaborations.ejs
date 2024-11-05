@@ -1,0 +1,76 @@
+<div class="py-6">
+    <!-- Header -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">My Collaborations</h1>
+                <p class="mt-1 text-sm text-gray-500">Projects you're collaborating on</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collaborations Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <% if (collaborations.length === 0) { %>
+            <div class="text-center py-12 bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <i class="fas fa-users text-gray-400 text-5xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900">No Collaborations Yet</h3>
+                    <p class="mt-1 text-gray-500">You haven't been invited to any projects yet.</p>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <% collaborations.forEach(project => { %>
+                    <div class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900">
+                                        <%= project.name %>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        Owned by <%= project.owner.username %>
+                                    </p>
+                                </div>
+                                <div class="px-2 py-1 text-xs font-medium rounded-full
+                                    <%= project.collaborators.find(c => c.user._id.toString() === user.id).role === 'admin' ? 
+                                        'bg-indigo-100 text-indigo-800' : 
+                                        project.collaborators.find(c => c.user._id.toString() === user.id).role === 'write' ?
+                                        'bg-green-100 text-green-800' : 
+                                        'bg-gray-100 text-gray-800' %>">
+                                    <%= project.collaborators.find(c => c.user._id.toString() === user.id).role %>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex items-center justify-between text-sm text-gray-500">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-users mr-1"></i>
+                                        <%= project.collaborators.length %> collaborators
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        Updated <%= new Date(project.updatedAt).toLocaleDateString() %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <a href="/projects/<%= project._id %>" 
+                                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                    <i class="fas fa-code mr-2"></i>
+                                    Open Project
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Add any specific collaboration page JavaScript here
+});
+</script> 

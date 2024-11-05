@@ -1,0 +1,44 @@
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.gsap-hero-image img {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Custom gradients */
+.gradient-text {
+    background: linear-gradient(45deg, #4F46E5, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Hover effects */
+.feature-card {
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .gsap-hero-image {
+        order: -1;
+    }
+}

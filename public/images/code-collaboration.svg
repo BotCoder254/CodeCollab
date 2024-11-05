@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+    <!-- Add your SVG illustration here -->
+    <!-- This is a placeholder for the illustration -->
+    <rect width="800" height="600" fill="#4F46E5" opacity="0.1"/>
+    <path d="M400 100 L500 300 L300 300 Z" fill="#4F46E5" opacity="0.5"/>
+</svg> 

@@ -1,0 +1,65 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 to-indigo-900 flex items-center justify-center px-4">
+    <div class="max-w-lg w-full text-center">
+        <!-- Animated 404 Number -->
+        <div class="gsap-404 text-9xl font-bold text-white opacity-20 mb-8">404</div>
+        
+        <!-- Error Message -->
+        <h1 class="gsap-title text-4xl font-bold text-white mb-4">Page Not Found</h1>
+        <p class="gsap-text text-gray-300 mb-8">The page you're looking for doesn't exist or has been moved.</p>
+        
+        <!-- Navigation Buttons -->
+        <div class="gsap-buttons flex flex-col sm:flex-row justify-center gap-4">
+            <a href="/" class="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors inline-flex items-center justify-center">
+                <i class="fas fa-home mr-2"></i>
+                Go Home
+            </a>
+            <a href="javascript:history.back()" class="px-8 py-3 border border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-colors inline-flex items-center justify-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Go Back
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // GSAP Animations
+    gsap.from('.gsap-404', {
+        y: -100,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'elastic.out(1, 0.3)'
+    });
+
+    gsap.from('.gsap-title', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.5
+    });
+
+    gsap.from('.gsap-text', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.7
+    });
+
+    gsap.from('.gsap-buttons a', {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.9,
+        stagger: 0.2
+    });
+
+    // Floating animation for 404
+    gsap.to('.gsap-404', {
+        y: 20,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut'
+    });
+});
+</script> 

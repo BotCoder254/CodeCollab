@@ -1,0 +1,128 @@
+<div class="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-gray-900 to-black">
+    <!-- Navigation -->
+    <nav class="bg-transparent/20 backdrop-blur-lg border-b border-white/10 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-2xl font-bold text-white">CodeCollab</span>
+                </a>
+                <a href="/auth/login" class="text-white hover:text-indigo-400 transition-colors">
+                    Already have an account? <span class="font-bold">Sign in</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <div class="flex-grow flex items-center justify-center px-4 relative">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-600 rounded-full filter blur-3xl opacity-20 animate-blob"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600 rounded-full filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div class="relative max-w-md w-full">
+            <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl p-8 border border-white/10">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-extrabold text-white">
+                        Create your account
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-400">
+                        Join our community of developers
+                    </p>
+                </div>
+
+                <% if (locals.error) { %>
+                    <div class="bg-red-500/20 border-l-4 border-red-500 text-red-300 p-4 rounded mb-6" role="alert">
+                        <p class="font-medium">Error</p>
+                        <p><%= error %></p>
+                    </div>
+                <% } %>
+
+                <form class="space-y-6" action="/auth/register" method="POST">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-300">Username</label>
+                        <input id="username" name="username" type="text" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Choose a username" value="<%= locals.username || '' %>">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300">Email address</label>
+                        <input id="email" name="email" type="email" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your email" value="<%= locals.email || '' %>">
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+                        <input id="password" name="password" type="password" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Create a password">
+                    </div>
+
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-300">Confirm Password</label>
+                        <input id="confirmPassword" name="confirmPassword" type="password" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Confirm your password">
+                    </div>
+
+                    <div class="flex items-center">
+                        <input id="terms" name="terms" type="checkbox" required
+                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-700 rounded bg-white/5">
+                        <label for="terms" class="ml-2 block text-sm text-gray-300">
+                            I agree to the <a href="#" class="text-indigo-400 hover:text-indigo-300">Terms</a> and 
+                            <a href="#" class="text-indigo-400 hover:text-indigo-300">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-transparent py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-400 text-sm">
+                © 2024 CodeCollab. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</div>
+
+<style>
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    gsap.from('.max-w-md', {
+        duration: 1,
+        y: 20,
+        opacity: 0,
+        ease: 'power3.out'
+    });
+});
+</script>

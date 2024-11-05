@@ -1,0 +1,35 @@
+<div id="notifications" class="fixed bottom-4 right-4 space-y-2 z-50">
+    <!-- Notifications will be dynamically inserted here -->
+</div>
+
+<script>
+function showNotification(message, type = 'success') {
+    const notifications = document.getElementById('notifications');
+    const notification = document.createElement('div');
+    
+    notification.className = `
+        flex items-center space-x-3 px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 
+        ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'}
+    `;
+    
+    notification.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} text-white"></i>
+        <p class="text-white">${message}</p>
+    `;
+    
+    notifications.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.add('translate-y-0', 'opacity-100');
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
+</script> 

@@ -1,0 +1,180 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-black">
+    <!-- Navigation -->
+    <nav class="bg-transparent/20 backdrop-blur-lg border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="text-3xl font-bold text-white gsap-logo">
+                        <span class="text-indigo-400">Code</span>Collab
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 gsap-nav">
+                    <a href="/auth/login" class="text-white hover:text-indigo-400 transition-colors px-4 py-2">Login</a>
+                    <a href="/auth/register" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-indigo-600 rounded-full filter blur-3xl opacity-20 animate-blob"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-600 rounded-full filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8 gsap-hero-text">
+                    <h1 class="text-5xl md:text-6xl font-bold text-white leading-tight">
+                        Code Together, Build Together
+                    </h1>
+                    <p class="text-xl text-gray-300">
+                        Experience seamless real-time code collaboration with advanced features and intuitive interface.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="/auth/register" 
+                           class="inline-flex items-center justify-center px-8 py-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                            <i class="fas fa-rocket mr-2"></i>
+                            Start Coding
+                        </a>
+                        <a href="#features" 
+                           class="inline-flex items-center justify-center px-8 py-3 rounded-full border border-white/20 text-white hover:bg-white/10 transition-colors">
+                            <i class="fas fa-play mr-2"></i>
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="gsap-hero-image">
+                    <img src="/images/hero-illustration.svg" alt="Code Collaboration" class="w-full">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="relative bg-black/30 backdrop-blur-lg py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center text-white mb-16 gsap-feature-title">
+                Why Choose CodeCollab?
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Real-time Collaboration -->
+                <div class="p-6 rounded-xl bg-white/5 backdrop-blur-lg border border-white/10 gsap-feature">
+                    <div class="w-12 h-12 bg-indigo-600/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-2xl text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Real-Time Collaboration</h3>
+                    <p class="text-gray-300">Code together seamlessly with multiple developers. See changes as they happen.</p>
+                </div>
+
+                <!-- Advanced Editor -->
+                <div class="p-6 rounded-xl bg-white/5 backdrop-blur-lg border border-white/10 gsap-feature">
+                    <div class="w-12 h-12 bg-purple-600/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-code text-2xl text-purple-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Advanced Editor</h3>
+                    <p class="text-gray-300">Feature-rich Monaco editor with syntax highlighting and intelligent code completion.</p>
+                </div>
+
+                <!-- Version Control -->
+                <div class="p-6 rounded-xl bg-white/5 backdrop-blur-lg border border-white/10 gsap-feature">
+                    <div class="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-code-branch text-2xl text-blue-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Version Control</h3>
+                    <p class="text-gray-300">Track changes, manage versions, and collaborate with confidence.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="relative py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold text-white mb-8">Ready to Start Coding?</h2>
+            <a href="/auth/register" 
+               class="inline-flex items-center justify-center px-8 py-3 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                <i class="fas fa-rocket mr-2"></i>
+                Get Started Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes blob {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(30px, -50px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initial animations
+    gsap.from('.gsap-logo', {
+        opacity: 0,
+        x: -50,
+        duration: 1
+    });
+
+    gsap.from('.gsap-nav', {
+        opacity: 0,
+        y: -30,
+        duration: 1,
+        stagger: 0.2
+    });
+
+    gsap.from('.gsap-hero-text', {
+        opacity: 0,
+        x: -50,
+        duration: 1,
+        delay: 0.5
+    });
+
+    gsap.from('.gsap-hero-image', {
+        opacity: 0,
+        x: 50,
+        duration: 1,
+        delay: 0.5
+    });
+
+    // Scroll animations
+    gsap.from('.gsap-feature-title', {
+        scrollTrigger: {
+            trigger: '.gsap-feature-title',
+            start: 'top 80%'
+        },
+        opacity: 0,
+        y: 30,
+        duration: 1
+    });
+
+    gsap.from('.gsap-feature', {
+        scrollTrigger: {
+            trigger: '.gsap-feature',
+            start: 'top 80%'
+        },
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        stagger: 0.2
+    });
+});
+</script> 

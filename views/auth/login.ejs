@@ -1,0 +1,95 @@
+<div class="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-gray-900 to-black">
+    <!-- Navigation -->
+    <nav class="bg-transparent py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-2xl font-bold text-white">CodeCollab</span>
+                </a>
+                <a href="/auth/register" class="text-white hover:text-indigo-400 transition-colors">
+                    Need an account? <span class="font-bold">Sign up</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div class="flex-grow flex items-center justify-center px-4">
+        <div class="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-lg rounded-xl shadow-2xl p-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-white">
+                    Welcome back
+                </h2>
+                <p class="mt-2 text-sm text-gray-400">
+                    Sign in to continue your coding journey
+                </p>
+            </div>
+
+            <% if (locals.error) { %>
+                <div class="bg-red-500/20 border-l-4 border-red-500 text-red-300 p-4 rounded" role="alert">
+                    <p class="font-medium">Error</p>
+                    <p><%= error %></p>
+                </div>
+            <% } %>
+
+            <form class="mt-8 space-y-6" action="/auth/login" method="POST">
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="text-sm font-medium text-gray-300">Email address</label>
+                        <input id="email" name="email" type="email" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your email" value="<%= locals.email || '' %>">
+                    </div>
+                    <div>
+                        <label for="password" class="text-sm font-medium text-gray-300">Password</label>
+                        <input id="password" name="password" type="password" required 
+                            class="mt-1 block w-full px-4 py-3 bg-white/5 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" name="remember_me" type="checkbox"
+                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-700 rounded bg-white/5">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-300">
+                            Remember me
+                        </label>
+                    </div>
+                    <a href="/auth/forgot-password" class="text-sm text-indigo-400 hover:text-indigo-300">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <button type="submit" 
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-transparent py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-gray-400 text-sm">
+                © 2024 CodeCollab. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</div>
+
+<script>
+// Add subtle animation to form elements
+document.addEventListener('DOMContentLoaded', () => {
+    gsap.from('.max-w-md', {
+        duration: 1,
+        y: 20,
+        opacity: 0,
+        ease: 'power3.out'
+    });
+});
+</script> 
